@@ -1,0 +1,13 @@
+{
+"name": "functional",
+"mantenimientos":    ["Limpieza fisica de equipo de computo(Dell, Paladin..)",
+                    "Scanners en su ubicacion, identificados y ruteados",
+                    "Monitor funcional y sin daño fisico",
+                    "Teclado y mouse funcional, sin daño fisico",
+                    "Poe injectors ruteados",
+                    "Verificar que las fuentes de poder esten configuradas a 12V DC",
+                    "Verificar que el PoE injector se encuentre encendido",
+                    "Validar que los soportes de las unidades esten bien asegurados",
+                    "Validar que las tablillas esten energizadas 2.5 V DC",
+                    "Validar que las tablillas emitan su señal bluetooth"]
+}

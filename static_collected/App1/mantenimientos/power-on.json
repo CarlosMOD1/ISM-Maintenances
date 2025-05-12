@@ -1,0 +1,10 @@
+{
+"name": "functional",
+"mantenimientos":    ["Limpieza fisica de fixturas de Sapphire (6)",
+                        "Validar que la fixturas no presente daños fisicos",
+                        "Monitor funcional y sin daño fisico",
+                        "Validacion de PIR, y LCD display con golden sapphire",
+                        "Verifique fuentes de poder, esten configuradas a 12V DC. y medirlo",
+                        "Verifique que el PoE injector se encuentre encendido",
+                        "Validar que la tierra para pulseras se encuentre bien aterrizada"]
+}

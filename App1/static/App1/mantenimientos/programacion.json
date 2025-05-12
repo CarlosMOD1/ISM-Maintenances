@@ -1,0 +1,13 @@
+{
+"name": "programacion",
+"mantenimientos":  ["Limpieza fisica de equipo de computo(Dell, Paladin..)",
+                    "Scanners en su ubicacion, identificados y ruteados",
+                    "Seggers identificados y ruteados sin daño en sus puertos",
+                    "Conectores Jlink con sus seguros y sin pines doblados/dañados",
+                    "Monitor funcional y sin daño fisico",
+                    "Teclado y mouse funcional, sin daño fisico",
+                    "POE injectors ruteados y funcionales",
+                    "Verificar que las fuentes de poder esten configuradas a 12V DC",
+                    "Verificar que el PoE injector se encuentre encendido",
+                    "Validar que la tierra para pulseras se encuentre bien aterrizada"]
+}

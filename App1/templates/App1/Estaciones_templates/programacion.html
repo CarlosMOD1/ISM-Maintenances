@@ -1,0 +1,59 @@
+{% extends "App1/layout.html" %}
+{% load static %}
+{% block title %}
+Programación
+{% endblock %}
+{% block content %}
+<h2>Programación</h2>
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Estación</th>
+            <th>Estatus</th>
+            <th>Registrar</th>
+            <th>Documentación</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in "12345678" %}
+        <tr>
+            <td>programacion_est_{{ i }}</td>
+            <td>
+                {% if 'programacion_est_'|add:i in completed_stations %}
+                Completado
+                {% else %}
+                No Completado
+                {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'log_maintenance' 'programacion_est_'|add:i %}?next={{ request.path }}" class="button">Registrar</a>
+            </td>
+            <td>
+                <a href="{% static 'App1/Archivos_pdf_mantenimiento/Programacion_mantenimientos.pdf' %}" class="button" target="_blank">Ver PDF</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+    <tbody>
+        {% for i in "12" %}
+        <tr>
+            <td>programacion_2_est_{{ i }}</td>
+            <td>
+                {% if 'programacion_2_est_'|add:i in completed_stations %}
+                Completado
+                {% else %}
+                No Completado
+                {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'log_maintenance' 'programacion_2_est_'|add:i %}" class="button">Registrar</a>
+            </td>
+            <td>
+                <a href="{% static 'App1/Archivos_pdf_mantenimiento/Programacion_mantenimientos.pdf' %}" class="button" target="_blank">Ver PDF</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

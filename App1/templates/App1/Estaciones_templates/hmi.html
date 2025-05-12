@@ -1,0 +1,59 @@
+{% extends "App1/layout.html" %}
+{% load static %}
+{% block title %}
+Programación
+{% endblock %}
+{% block content %}
+<h2>HMI</h2>
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Estación</th>
+            <th>Estatus</th>
+            <th>Registrar</th>
+            <th>Documentación</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in "123456" %}
+        <tr>
+            <td>HMI_est_{{ i }}</td>
+            <td>
+                {% if 'HMI_est_'|add:i in completed_stations %}
+                Completado
+                {% else %}
+                No Completado
+                {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'log_maintenance' 'HMI_est_'|add:i %}?next={{ request.path }}" class="button">Registrar</a>
+            </td>
+            <td>
+                <a href="{% static 'App1/Archivos_pdf_mantenimiento/HMI_mantenimientos.pdf' %}" class="button" target="_blank">Ver PDF</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+    <tbody>
+        {% for i in "1" %}
+        <tr>
+            <td>HMI_2_est_{{ i }}</td>
+            <td>
+                {% if 'HMI_2_est_'|add:i in completed_stations %}
+                Completado
+                {% else %}
+                No Completado
+                {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'log_maintenance' 'HMI_2_est_'|add:i %}" class="button">Registrar</a>
+            </td>
+            <td>
+                <a href="{% static 'App1/Archivos_pdf_mantenimiento/HMI_mantenimientos.pdf' %}" class="button" target="_blank">Ver PDF</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

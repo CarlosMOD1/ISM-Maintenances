@@ -1,0 +1,47 @@
+{% extends "App1/layout.html" %}
+{% block title %}
+Aprobar Mantenimientos
+{% endblock %}
+{% block content %}
+<h2>Panel para Aprobar/Rechazar Mantenimientos</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Estación</th>
+            <th>Técnico</th>
+            <th>Ingeniero</th>
+            <th>Comentarios</th>
+            <th>Fecha</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in pending_records %}
+        <tr>
+            <td>{{ record.station.name }}</td>
+            <td>{{ record.nombre_tecnico }}</td>
+            <td>{{ record.nombre_ingeniero }}</td>
+            <td>{{ record.comentarios }}</td>
+            <td>{{ record.log_date }}</td>
+            <td>
+                <!-- Botón para aprobar -->
+                <form method="post" action="{% url 'approve' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="record_id" value="{{ record.id }}">
+                    <input type="hidden" name="action" value="Aprobado">
+                    <button type="submit" class="btn btn-success">Aprobar</button>
+                </form>
+                <!-- Botón para rechazar -->
+                <form method="post" action="{% url 'approve' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="record_id" value="{{ record.id }}">
+                    <input type="hidden" name="action" value="Rechazado">
+                    <button type="submit" class="btn btn-danger">Rechazar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

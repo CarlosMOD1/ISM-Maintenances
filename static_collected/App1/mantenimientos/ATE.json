@@ -1,0 +1,13 @@
+{
+"name": "functional",
+"mantenimientos":    ["Limpieza fisica de equipo de computo(Dell, Paladin..)",
+                        "Revisar integridad de puertos para perifericos",
+                        "Revision de funcionalidad de monitor.",
+                        "Revision de funcionalidad de teclado y mouse",
+                        "Revision de funcionalidad de scanner",
+                        "Revisar ruteado de cables. Aplicar corbatas en caso de ser necesario",
+                        "Limpieza fisica. (Aspirado de puertos, disipadores, abanicos y PSU).",
+                        "Revisar codigos QR, En caso de desgaste, sustituir los codigos QR",
+                        "Revisar cableado de chucks, verificando que esten soldados Revisar integridad de puertos para perifericos. Resoldar en caso de que sea necesario de funcionalidad de scanner",
+                        "Revisar funcionalidad de relevadores. Sustituir en caso de que sea necesario"]
+}

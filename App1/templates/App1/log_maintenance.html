@@ -1,0 +1,36 @@
+{% extends "App1/layout.html" %}
+{% load static %}
+{% block title %}
+Log Maintenance - {{ station_name }}
+{% endblock %}
+{% block content %}
+<h2>Log Maintenance - {{ station_name }}</h2>
+<form method="post" class="maintenance-form">
+    {% csrf_token %}
+    
+    <!-- Campo oculto para la URL anterior -->
+    <input type="hidden" name="next" value="{{ next }}">
+
+    <h3>Checklist de Mantenimiento</h3>
+    <table class="checklist-table">
+        <thead>
+            <tr>
+                <th>Tarea</th>
+                <th>Seleccionar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for field in checklist_form %}
+            <tr>
+                <td><label for="{{ field.id_for_label }}">{{ field.label }}</label></td>
+                <td>{{ field }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h3>Formulario de Mantenimiento</h3>
+    {{ form.as_p }}
+
+    <button type="submit" class="btn btn-primary">Registrar</button>
+</form>
+{% endblock %}

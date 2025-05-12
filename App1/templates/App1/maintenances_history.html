@@ -1,0 +1,87 @@
+{% extends "App1/layout.html" %}
+{% block title %}
+Historial de Mantenimientos
+{% endblock %}
+{% block content %}
+{% load static %}
+<h2>Historial de Mantenimientos</h2>
+<form method="post" class="styled-history-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Buscar</button>
+</form>
+
+{% if maintenance_records %}
+    <h3>Resultados</h3>
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>Estación</th>
+                <th>Técnico</th>
+                <th>Ingeniero</th>
+                <th>Unidad de Trabajo</th>
+                <th>Comentarios</th>
+                <th>Tipo de mantenimiento</th>
+                <th>Fecha</th>
+                <th>Completado</th>
+                <th>Aprobado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in maintenance_records %}
+            <tr class="record-row" data-record-id="{{ record.id }}">
+                <td>{{ record.station.name }}</td>
+                <td>{{ record.nombre_tecnico }}</td>
+                <td>{{ record.nombre_ingeniero }}</td>
+                <td>{{ record.unidad_de_trabajo }}</td>
+                <td>{{ record.comentarios }}</td>
+                <td>{{ record.tipo_mantenimiento }}</td>
+                <td>{{ record.log_date }}</td>
+                <td>{{ record.completed }}</td>
+                <td>{{ record.aprobado }}</td>
+            </tr>
+            <tr class="checklist-row" id="checklist-{{ record.id }}" style="display: none;">
+                <td colspan="9">
+                    <ul>
+                        {% for checklist_item in record.checklist_records.all %}
+                        <li>{{ checklist_item.checklist_item }} - 
+                            {% if checklist_item.is_completed %}
+                                Completado
+                            {% else %}
+                                Pendiente
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <form method="get" action="{% url 'download_maintenance_excel' %}">
+        <input type="hidden" name="week_number" value="{{ form.cleaned_data.week_number }}">
+        <input type="hidden" name="year" value="{{ form.cleaned_data.year }}">
+        <input type="hidden" name="familia" value="{{ form.cleaned_data.familia }}">
+        <button type="submit">Descargar Mantenimientos de esta Semana en Excel</button>
+    </form>
+{% endif %}
+
+<!-- JavaScript para mostrar/ocultar la checklist -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const rows = document.querySelectorAll(".record-row");
+
+        rows.forEach(row => {
+            row.addEventListener("click", function () {
+                const recordId = this.getAttribute("data-record-id");
+                const checklistRow = document.getElementById(`checklist-${recordId}`);
+                if (checklistRow.style.display === "none") {
+                    checklistRow.style.display = "table-row";
+                } else {
+                    checklistRow.style.display = "none";
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

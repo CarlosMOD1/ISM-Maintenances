@@ -1,0 +1,15 @@
+{% extends "App1/layout.html" %}
+{% block title %}
+Home
+{% endblock %}
+{% block content %}
+<h2>Seleccione su producto</h2>
+<div class="Product-container">
+    <a href="{% url 'SPSF' %}" class="Product-card spsf-card {% if has_incomplete_spsf %}yellow-card{% else %}green-card{% endif %}">
+        SPSF
+    </a>
+    <a href="{% url 'tapes' %}" class="Product-card tapes-card {% if has_incomplete_tapes %}yellow-card{% else %}green-card{% endif %}">
+        Tapes
+    </a>
+</div>
+{% endblock %}

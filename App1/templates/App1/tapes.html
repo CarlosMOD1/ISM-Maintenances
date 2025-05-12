@@ -1,0 +1,14 @@
+{% extends "App1/layout.html" %}
+{% block title %}
+Home
+{% endblock %}
+{% block content %}
+<h2>Tapes Estaciones de pruebas</h2>
+<div class="stations-container">
+    {% for station, completed in all_completed_stations.items %}
+    <a href="{% url 'tapes_station_view' station %}" class="station-card {% if completed %}completed{% else %}not-completed{% endif %}">
+        {{ station|capfirst }}
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}
