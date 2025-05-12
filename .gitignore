@@ -1,6 +1,17 @@
+<<<<<<< HEAD
 # .gitignore
 __pycache__/
 *.pyc
 *.log
 *.zip
 .env
+=======
+# .gitignore
+__pycache__/
+*.pyc
+*.log
+*.zip
+.env
+# Ignorar la base de datos
+db.sqlite3
+>>>>>>> 5870a96 (Actualización del archivo .gitignore para ignorar la base de datos)
