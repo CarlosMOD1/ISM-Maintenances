@@ -6,13 +6,6 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body.jonatan-background {
-    background-image: url('/static/App1/images/jonatan_background.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
 .message {
     font-weight: 600;
     color: #000000; /* Letras negras */

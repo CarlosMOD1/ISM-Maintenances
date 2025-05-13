@@ -122,7 +122,6 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "App1/static",
-    'c:/Users/Carlos Ortiz/Documents/DJANG-Maintenances/App1/static',
 ]
 
 # Default primary key field type

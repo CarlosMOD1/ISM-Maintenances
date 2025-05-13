@@ -238,17 +238,6 @@ def redirect_to_log_maintenance(request, station_name):
     log_maintenance_url = f"{reverse('log_maintenance', args=[station_name])}?next={previous_url}"
     return redirect(log_maintenance_url)
 
-def user_dashboard(request):
-    background_image = None
-    if request.user.username == "Jonatan":
-        background_image = "/static/images/jonatan_background.jpg"  # Ruta de la imagen específica para Jonatan
-    else:
-        background_image = "/static/images/default_background.jpg"  # Imagen de fondo predeterminada para otros usuarios
-
-    return render(request, "dashboard.html", {
-        "background_image": background_image,
-    })
-
 STATIONS_SPSF = {
     "programacion": {"prefix": "programacion_est_", "total": 8},
     "gps3": {"prefix": "GPS3_est_", "total": 1},

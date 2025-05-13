@@ -8,7 +8,7 @@
     <link rel="icon" href="{% static 'App1/images/Logo.ico' %}" type="image/x-icon">
 </head>
 
-<body class="{% if user.username == 'Jonatan' %}jonatan-background{% endif %}">
+<body>
 <div class="navbar">
     <div class="navbar-links">
         {% if user.is_authenticated %}
@@ -19,6 +19,7 @@
                 <a href="{% url 'register' %}" class="navbar-item">Registrar usuario</a>
             {% endif %}
             <form method="post" action="{% url 'logout' %}" style="display: inline;">
+            
                 {% csrf_token %}
                 <button type="submit" class="navbar-item logout-button">Cerrar Sesión</button>
             </form>
@@ -29,6 +30,7 @@
     <div class="navbar-logo-container">
         <img src="{% static 'App1/images/logo.png' %}" alt="Logo" class="navbar-logo">
     </div>
+    
 </div>
 
 <div class="body-content">
@@ -36,7 +38,7 @@
     {% endblock %}
     <hr/>
     <footer>
-        <p>&copy; Invisibles systems 2025</p>
+        <p>&copy;Invisibles systems 2025</p>
     </footer>
 </div>
 </body>
