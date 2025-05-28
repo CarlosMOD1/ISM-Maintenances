@@ -18,7 +18,7 @@ class LogMessageForm(forms.ModelForm):
 class MaintenanceRecordForm(forms.ModelForm):
     class Meta:
         model = MaintenanceRecord
-        fields = ("nombre_tecnico","nombre_ingeniero","comentarios","tipo_mantenimiento",)   # NOTE: the trailing comma is required
+        fields = ("nombre_tecnico", "nombre_ingeniero", "comentarios", "tipo_mantenimiento", "imagen")  
         widgets = {
             'nombre_tecnico': forms.TextInput(attrs={'class': 'form-control'}),
             'nombre_ingeniero': forms.TextInput(attrs={'class': 'form-control'}),
@@ -30,6 +30,7 @@ class MaintenanceRecordForm(forms.ModelForm):
             'nombre_ingeniero': 'Ingeniero Responsable',
             'comentarios': 'Reemplazos y reparaciones',
             'tipo_mantenimiento': 'Tipo de Mantenimiento',
+            'imagen': 'Evidencia fotográfica',
         }
 
 class MaintenanceHistoryForm(forms.Form):
@@ -46,12 +47,11 @@ class MaintenanceHistoryForm(forms.Form):
 
 class MantenimientoForm(forms.Form):
     def __init__(self, station_name, *args, **kwargs):
-        self.maintenance_record = kwargs.pop('maintenance_record', None)  # Recibe el registro de mantenimiento
+        self.maintenance_record = kwargs.pop('maintenance_record', None)
         super().__init__(*args, **kwargs)
-        
-        # Construir la ruta del archivo JSON basado en el nombre de la estación
+
+        # Siempre intenta cargar el checklist del JSON
         json_file_path = os.path.join('App1/static/App1/mantenimientos', f"{station_name.split('_')[0]}.json")
-        
         try:
             with open(json_file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
@@ -62,10 +62,18 @@ class MantenimientoForm(forms.Form):
                         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
                     )
         except FileNotFoundError:
-            # Manejar el caso en que el archivo JSON no exista
             self.fields["error"] = forms.CharField(
                 initial=f"No se encontró el archivo JSON para la estación: {json_file_path}",
                 widget=forms.TextInput(attrs={'readonly': 'readonly', 'class': 'form-control'})
+            )
+
+        # Si la estación es MiniWhite, agrega el campo especial
+        if station_name.lower().startswith("miniwhite"):
+            self.fields["cells_active"] = forms.IntegerField(
+                label="Cantidad de celdas que detectan MAC",
+                min_value=0,
+                max_value=20,
+                widget=forms.NumberInput(attrs={'class': 'form-control'})
             )
 
     def save_checklist(self):

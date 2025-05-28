@@ -53,6 +53,17 @@ Historial de Mantenimientos
                         </li>
                         {% endfor %}
                     </ul>
+                    {% if record.cells_active %}
+                        <div style="margin-top:10px;">
+                            <strong>Celdas que detectan MAC:</strong> {{ record.cells_active }}
+                        </div>
+                    {% endif %}
+                    {% if record.imagen %}
+                        <div style="margin-top:10px;">
+                            <strong>Evidencia fotográfica:</strong><br>
+                            <img src="{{ record.imagen.url }}" alt="Evidencia" style="max-width:300px;max-height:300px;">
+                        </div>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

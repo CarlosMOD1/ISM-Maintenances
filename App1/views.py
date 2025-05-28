@@ -47,7 +47,7 @@ def log_maintenance(request, station_name):
             break
 
     # Inicializar los formularios
-    form = MaintenanceRecordForm(request.POST or None)
+    form = MaintenanceRecordForm(request.POST or None, request.FILES or None)
     checklist_form = MantenimientoForm(station_name, request.POST or None)
 
     # Obtener la URL anterior desde el parámetro 'next' o usar '/' como respaldo
@@ -64,11 +64,19 @@ def log_maintenance(request, station_name):
             elif base_station_name in STATIONS_TAPES:
                 maintenance_record.unidad_de_trabajo = "TAPES"
 
+            # ← AQUÍ AGREGA EL CÓDIGO PARA MINIWHITE
+            if "cells_active" in checklist_form.cleaned_data:
+                maintenance_record.cells_active = checklist_form.cleaned_data["cells_active"]
+
             # Verificar si todos los elementos de la checklist están marcados
-            all_tasks_completed = all(
-                value for field_name, value in checklist_form.cleaned_data.items() if field_name.startswith("task_")
-            )
-            maintenance_record.completed = all_tasks_completed  # Actualizar el campo 'completed'
+            task_fields = [value for field_name, value in checklist_form.cleaned_data.items() if field_name.startswith("task_")]
+            all_tasks_completed = all(task_fields)
+
+            # Si es MiniWhite, también requiere que cells_active > 0
+            if "cells_active" in checklist_form.cleaned_data:
+                maintenance_record.completed = all_tasks_completed and (maintenance_record.cells_active and maintenance_record.cells_active > 0)
+            else:
+                maintenance_record.completed = all_tasks_completed
 
             maintenance_record.save()
 
@@ -230,6 +238,7 @@ def tapes_station_view(request, station_name):
         "completed_stations": completed_stations,
     })
 
+
 def redirect_to_log_maintenance(request, station_name):
     """
     Redirige a la vista log_maintenance con la URL anterior como parámetro.
@@ -263,6 +272,7 @@ STATIONS_SPSF = {
 
 STATIONS_TAPES = {
     "ATE": {"prefix": "ATE_est_", "total": 6},
+    "MiniWhite": {"prefix": "MiniWhite_est_", "total": 3},
 }
 
 class CustomLoginView(LoginView):

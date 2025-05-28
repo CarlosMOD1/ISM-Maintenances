@@ -25,7 +25,7 @@ class MaintenanceRecord(models.Model):
         ('Preventivo', 'Preventivo'),
     ]
     FAMILIA_CHOICES = [
-        ('tapes', 'tapes'),
+        ('TAPES', 'TAPES'),
         ('SPSF', 'SPSF'),
     ]
     APROBADO_CHOICES = [
@@ -39,10 +39,12 @@ class MaintenanceRecord(models.Model):
     nombre_ingeniero = models.CharField(max_length=100, default=' ')
     unidad_de_trabajo = models.CharField(max_length=100, choices=FAMILIA_CHOICES, default='--')
     tipo_mantenimiento = models.CharField(max_length=20, choices=TIPO_MANTENIMIENTO_CHOICES, default='Preventivo')
-    comentarios = models.CharField(max_length=300, default=' ')
+    comentarios = models.CharField(max_length=300, default=' ', null=True, blank=True)
     log_date = models.DateTimeField("date logged", default=timezone.now)
     week_number = models.PositiveIntegerField(editable=False)
-    aprobado = models.CharField(max_length=20, choices=APROBADO_CHOICES, default='No aprobado')  
+    aprobado = models.CharField(max_length=20, choices=APROBADO_CHOICES, default='No aprobado')
+    imagen = models.ImageField(upload_to='mantenimientos/', null=True, blank=True)  # <-- Nuevo campo
+    cells_active = models.IntegerField(null=True, blank=True)  
 
     def save(self, *args, **kwargs):
         self.week_number = self.log_date.isocalendar()[1]

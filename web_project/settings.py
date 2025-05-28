@@ -137,3 +137,6 @@ LOGIN_URL = '/login/'  # URL para redirigir a los usuarios no autenticados
 LOGIN_REDIRECT_URL = '/'  # URL a la que se redirige después de iniciar sesión
 LOGOUT_REDIRECT_URL = '/'  # URL a la que se redirige después de cerrar sesión
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
