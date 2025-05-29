@@ -469,7 +469,7 @@ def miniwhite_view(request):
     })
 
 def miniwhite_station_view(request, section_name):
-    time_threshold = timezone.now() - timedelta(hours=1)
+    time_threshold = timezone.now() - timedelta(hours=16)
     maintenance_records = MaintenanceRecord.objects.filter(
         log_date__gte=time_threshold
     )
