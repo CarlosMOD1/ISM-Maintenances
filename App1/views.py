@@ -323,9 +323,18 @@ def home_view(request):
     has_incomplete_spsf = has_incomplete_stations(STATIONS_SPSF, completed_stations)
     has_incomplete_tapes = has_incomplete_stations(STATIONS_TAPES, completed_stations)
 
+    # Lógica para MiniWhite: usa las últimas 20 horas
+    from datetime import timedelta
+    from django.utils import timezone
+    time_threshold = timezone.now() - timedelta(hours=16)
+    miniwhite_records = MaintenanceRecord.objects.filter(log_date__gte=time_threshold)
+    miniwhite_completed = miniwhite_records.values_list('station__name', flat=True)
+    has_incomplete_miniwhite = has_incomplete_stations(STATIONS_MINIWHITE, miniwhite_completed)
+
     return render(request, 'App1/home.html', {
         "has_incomplete_spsf": has_incomplete_spsf,
         "has_incomplete_tapes": has_incomplete_tapes,
+        "has_incomplete_miniwhite": has_incomplete_miniwhite,
     })
 
 @staff_member_required  # Solo accesible para usuarios administradores
@@ -443,7 +452,7 @@ def register(request):
 #         return render(request, "App1/log_message.html", {"form": form})
 
 def miniwhite_view(request):
-    time_threshold = timezone.now() - timedelta(hours=20)
+    time_threshold = timezone.now() - timedelta(hours=16)
     maintenance_records = MaintenanceRecord.objects.filter(
         log_date__gte=time_threshold
     )
@@ -457,7 +466,7 @@ def miniwhite_view(request):
             total_stations=config["total"]
         )
 
-    return render(request, "App1/miniwhite.html", {
+    return render(request, "App1/MiniWhite.html", {
         "all_completed_stations": all_completed_stations,
     })
 
