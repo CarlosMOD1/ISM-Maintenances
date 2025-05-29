@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import UserRegistrationForm
+from datetime import timedelta
 
 
 # Replace the existing home function with the one below
@@ -41,7 +42,7 @@ def log_maintenance(request, station_name):
 
     # Extraer el nombre base de la estación
     base_station_name = None
-    for base_name, config in {**STATIONS_SPSF, **STATIONS_TAPES}.items():
+    for base_name, config in {**STATIONS_SPSF, **STATIONS_TAPES, **STATIONS_MINIWHITE}.items():
         if station_name.startswith(config["prefix"]):
             base_station_name = base_name
             break
@@ -58,11 +59,18 @@ def log_maintenance(request, station_name):
             maintenance_record = form.save(commit=False)
             maintenance_record.station = station
 
+            # Debug prints para verificar el valor
+            print("base_station_name:", base_station_name)
+            print("STATIONS_MINIWHITE keys:", STATIONS_MINIWHITE.keys())
+            print("STATIONS_MINIWHITE keys:", STATIONS_SPSF.keys())
+
             # Asignar automáticamente la unidad de trabajo
             if base_station_name in STATIONS_SPSF:
                 maintenance_record.unidad_de_trabajo = "SPSF"
             elif base_station_name in STATIONS_TAPES:
                 maintenance_record.unidad_de_trabajo = "TAPES"
+            elif base_station_name in STATIONS_MINIWHITE:
+                maintenance_record.unidad_de_trabajo = "MiniWhite"
 
             # ← AQUÍ AGREGA EL CÓDIGO PARA MINIWHITE
             if "cells_active" in checklist_form.cleaned_data:
@@ -104,11 +112,18 @@ def maintenances_history(request):
         week_number = form.cleaned_data['week_number']
         year = form.cleaned_data['year']
         familia = form.cleaned_data['familia']
+
+        filters = {
+            'unidad_de_trabajo': familia
+        }
+        if week_number:
+            filters['log_date__week'] = week_number
+        if year:
+            filters['log_date__year'] = year
+
         maintenance_records = MaintenanceRecord.objects.filter(
-            log_date__week=week_number,
-            log_date__year=year,
-            unidad_de_trabajo=familia
-        ).exclude(aprobado="Rechazado").prefetch_related('checklist_records')  # Excluir registros rechazados
+            **filters
+        ).exclude(aprobado="Rechazado").prefetch_related('checklist_records').order_by('-log_date')
 
     return render(request, "App1/maintenances_history.html", {
         "form": form,
@@ -270,9 +285,13 @@ STATIONS_SPSF = {
     "som_programacion": {"prefix": "som-programming_est_", "total": 2},
 }
 
+STATIONS_MINIWHITE = {
+    "MiniWhite-Mañana": {"prefix": "MiniWhite-Mañana_est_", "total": 6},
+    "MiniWhite-Tarde": {"prefix": "MiniWhite-Tarde_est_", "total": 6},
+}
+
 STATIONS_TAPES = {
     "ATE": {"prefix": "ATE_est_", "total": 6},
-    "MiniWhite": {"prefix": "MiniWhite_est_", "total": 3},
 }
 
 class CustomLoginView(LoginView):
@@ -420,3 +439,34 @@ def register(request):
 #             return redirect("home")
 #     else:
 #         return render(request, "App1/log_message.html", {"form": form})
+
+def miniwhite_view(request):
+    time_threshold = timezone.now() - timedelta(hours=20)
+    maintenance_records = MaintenanceRecord.objects.filter(
+        log_date__gte=time_threshold
+    )
+    completed_stations = maintenance_records.values_list('station__name', flat=True)
+
+    all_completed_stations = {}
+    for section_name, config in STATIONS_MINIWHITE.items():
+        all_completed_stations[section_name] = are_all_status_completed(
+            station_prefix=config["prefix"],
+            completed_stations=completed_stations,
+            total_stations=config["total"]
+        )
+
+    return render(request, "App1/miniwhite.html", {
+        "all_completed_stations": all_completed_stations,
+    })
+
+def miniwhite_station_view(request, section_name):
+    time_threshold = timezone.now() - timedelta(hours=1)
+    maintenance_records = MaintenanceRecord.objects.filter(
+        log_date__gte=time_threshold
+    )
+    completed_stations = maintenance_records.values_list('station__name', flat=True)
+
+    return render(request, f"App1/Estaciones_templates/{section_name}.html", {
+        "section_name": section_name,
+        "completed_stations": completed_stations,
+    })

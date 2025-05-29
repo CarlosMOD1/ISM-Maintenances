@@ -24,6 +24,8 @@ urlpatterns = [
     path("Historial_mantenimientos/", views.maintenances_history, name="Historial_mantenimientos"),
     path("download_maintenance_excel/", views.download_maintenance_excel, name="download_maintenance_excel"),
     path("register/", views.register, name="register"),
+    path("miniwhite/", views.miniwhite_view, name="miniwhite"),
+    path("miniwhite/<str:section_name>/", views.miniwhite_station_view, name="miniwhite_station_view"),
 ]
 
 

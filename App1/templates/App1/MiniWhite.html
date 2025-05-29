@@ -1,0 +1,13 @@
+{% extends "App1/layout.html" %}
+{% block title %}MiniWhite{% endblock %}
+{% block content %}
+<h2>MiniWhite Estaciones</h2>
+<div class="stations-container">
+    {% for section, completed in all_completed_stations.items %}
+    <a href="{% url 'miniwhite_station_view' section %}" class="station-card {% if completed %}completed{% else %}not-completed{% endif %}">
+        {{ section|capfirst }}
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}
+

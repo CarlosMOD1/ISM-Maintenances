@@ -17,16 +17,16 @@ ATE 1
     <tbody>
         {% for i in "123456" %}
         <tr>
-            <td>MiniWhite_est_{{ i }}</td>
+            <td>MiniWhite-Tarde_est_{{ i }}</td>
             <td>
-                {% if 'MiniWhite_est_'|add:i in completed_stations %}
+                {% if 'MiniWhite-Tarde_est_'|add:i in completed_stations %}
                 Completado
                 {% else %}
                 No Completado
                 {% endif %}
             </td>
             <td>
-                <a href="{% url 'log_maintenance' 'MiniWhite_est_'|add:i %}?next={{ request.path }}" class="button">Registrar</a>
+                <a href="{% url 'log_maintenance' 'MiniWhite-Tarde_est_'|add:i %}?next={{ request.path }}" class="button">Registrar</a>
             </td>
             <td>
                 <a href="{% static 'App1/Archivos_pdf_mantenimiento/ATE_mantenimientos.pdf' %}" class="button" target="_blank">Ver PDF</a>

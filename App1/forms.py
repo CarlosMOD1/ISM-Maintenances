@@ -34,9 +34,20 @@ class MaintenanceRecordForm(forms.ModelForm):
         }
 
 class MaintenanceHistoryForm(forms.Form):
-    week_number = forms.IntegerField(label="Número de Semana", min_value=1, max_value=52,widget=forms.NumberInput(attrs={'class': 'form-control week-number'}))
-    year = forms.IntegerField(label="Año", min_value=2000, max_value=2100,widget=forms.NumberInput(attrs={'class': 'form-control year'}))
-    familia = forms.ChoiceField(label="Familia", choices=MaintenanceRecord.FAMILIA_CHOICES,widget=forms.Select(attrs={'class': 'form-control familia'}))
+    week_number = forms.IntegerField(
+        label="Número de Semana", min_value=1, max_value=52,
+        required=False,  # <-- ahora es opcional
+        widget=forms.NumberInput(attrs={'class': 'form-control week-number'})
+    )
+    year = forms.IntegerField(
+        label="Año", min_value=2000, max_value=2100,
+        required=False,  # <-- ahora es opcional
+        widget=forms.NumberInput(attrs={'class': 'form-control year'})
+    )
+    familia = forms.ChoiceField(
+        label="Familia", choices=MaintenanceRecord.FAMILIA_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control familia'})
+    )
     
 
     def __init__(self, *args, **kwargs):
