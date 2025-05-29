@@ -324,8 +324,6 @@ def home_view(request):
     has_incomplete_tapes = has_incomplete_stations(STATIONS_TAPES, completed_stations)
 
     # Lógica para MiniWhite: usa las últimas 20 horas
-    from datetime import timedelta
-    from django.utils import timezone
     time_threshold = timezone.now() - timedelta(hours=16)
     miniwhite_records = MaintenanceRecord.objects.filter(log_date__gte=time_threshold)
     miniwhite_completed = miniwhite_records.values_list('station__name', flat=True)
