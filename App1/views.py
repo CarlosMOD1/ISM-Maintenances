@@ -19,6 +19,7 @@ from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import UserRegistrationForm
 from datetime import timedelta
+from django.core.paginator import Paginator
 
 
 # Replace the existing home function with the one below
@@ -58,11 +59,6 @@ def log_maintenance(request, station_name):
         if form.is_valid() and checklist_form.is_valid():
             maintenance_record = form.save(commit=False)
             maintenance_record.station = station
-
-            # Debug prints para verificar el valor
-            print("base_station_name:", base_station_name)
-            print("STATIONS_MINIWHITE keys:", STATIONS_MINIWHITE.keys())
-            print("STATIONS_MINIWHITE keys:", STATIONS_SPSF.keys())
 
             # Asignar automáticamente la unidad de trabajo
             if base_station_name in STATIONS_SPSF:
@@ -105,10 +101,11 @@ def log_maintenance(request, station_name):
 
 
 def maintenances_history(request):
-    form = MaintenanceHistoryForm(request.POST or None)
+    form = MaintenanceHistoryForm(request.GET or None)
     maintenance_records = None
+    page_obj = None
 
-    if request.method == "POST" and form.is_valid():
+    if form.is_valid():
         week_number = form.cleaned_data['week_number']
         year = form.cleaned_data['year']
         familia = form.cleaned_data['familia']
@@ -125,9 +122,14 @@ def maintenances_history(request):
             **filters
         ).exclude(aprobado="Rechazado").prefetch_related('checklist_records').order_by('-log_date')
 
+        # PAGINACIÓN: 30 registros por página
+        paginator = Paginator(maintenance_records, 30)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
     return render(request, "App1/maintenances_history.html", {
         "form": form,
-        "maintenance_records": maintenance_records,
+        "maintenance_records": page_obj,
     })
 
 def download_maintenance_excel(request):

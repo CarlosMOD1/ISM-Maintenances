@@ -5,8 +5,7 @@ Historial de Mantenimientos
 {% block content %}
 {% load static %}
 <h2>Historial de Mantenimientos</h2>
-<form method="post" class="styled-history-form">
-    {% csrf_token %}
+<form method="get" class="styled-history-form">
     <p>{{ form.familia.label_tag }} {{ form.familia }}</p>
     <p>{{ form.year.label_tag }} {{ form.year }}</p>
     <p>
@@ -80,6 +79,20 @@ Historial de Mantenimientos
         <input type="hidden" name="familia" value="{{ form.cleaned_data.familia }}">
         <button type="submit">Descargar Mantenimientos de esta Semana en Excel</button>
     </form>
+
+    {% if maintenance_records.has_other_pages %}
+    <div class="pagination">
+        {% if maintenance_records.has_previous %}
+            <a href="?page={{ maintenance_records.previous_page_number }}{% if request.GET.week_number %}&week_number={{ request.GET.week_number }}{% endif %}{% if request.GET.year %}&year={{ request.GET.year }}{% endif %}{% if request.GET.familia %}&familia={{ request.GET.familia }}{% endif %}">&laquo; Anterior</a>
+        {% endif %}
+
+        <span>Página {{ maintenance_records.number }} de {{ maintenance_records.paginator.num_pages }}</span>
+
+        {% if maintenance_records.has_next %}
+            <a href="?page={{ maintenance_records.next_page_number }}{% if request.GET.week_number %}&week_number={{ request.GET.week_number }}{% endif %}{% if request.GET.year %}&year={{ request.GET.year }}{% endif %}{% if request.GET.familia %}&familia={{ request.GET.familia }}{% endif %}">Siguiente &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
 {% endif %}
 
 <!-- JavaScript para mostrar/ocultar la checklist -->

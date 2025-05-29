@@ -48,6 +48,18 @@ class MaintenanceRecord(models.Model):
     cells_active = models.IntegerField(null=True, blank=True)  
 
     def save(self, *args, **kwargs):
+        if self.imagen:
+            from PIL import Image
+            from io import BytesIO
+            from django.core.files.base import ContentFile
+
+            img = Image.open(self.imagen)
+            output = BytesIO()
+            img = img.convert('RGB')  # Asegura que sea JPEG
+            # img.thumbnail((800, 800))  # Elimina esta línea si no quieres redimensionar
+            img.save(output, format='JPEG', quality=15)  # Solo reduce la calidad
+            output.seek(0)
+            self.imagen = ContentFile(output.read(), self.imagen.name)
         self.week_number = self.log_date.isocalendar()[1]
         super().save(*args, **kwargs)
 
