@@ -7,7 +7,12 @@ Historial de Mantenimientos
 <h2>Historial de Mantenimientos</h2>
 <form method="post" class="styled-history-form">
     {% csrf_token %}
-    {{ form.as_p }}
+    <p>{{ form.familia.label_tag }} {{ form.familia }}</p>
+    <p>{{ form.year.label_tag }} {{ form.year }}</p>
+    <p>
+        {{ form.week_number.label_tag }} {{ form.week_number }}
+        <div id="week-range-preview" style="margin-top:5px; font-weight:bold;"></div>
+    </p>
     <button type="submit">Buscar</button>
 </form>
 
@@ -94,5 +99,57 @@ Historial de Mantenimientos
             });
         });
     });
+</script>
+
+<script>
+function getMondayOfISOWeek(week, year) {
+    const simple = new Date(year, 0, 1 + (week - 1) * 7);
+    const dow = simple.getDay();
+    const ISOweekStart = simple;
+    if (dow <= 4)
+        ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+    else
+        ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+    return ISOweekStart;
+}
+
+function getSundayOfISOWeek(week, year) {
+    const monday = getMondayOfISOWeek(week, year);
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    return sunday;
+}
+
+function monthName(date) {
+    return date.toLocaleString('es-ES', { month: 'long' });
+}
+
+function updateWeekRangePreview() {
+    const weekInput = document.querySelector('.week-number');
+    const yearInput = document.querySelector('.year');
+    if (!weekInput || !yearInput) return;
+    const week = parseInt(weekInput.value);
+    const year = parseInt(yearInput.value);
+    if (!week || !year) {
+        document.getElementById('week-range-preview').innerText = '';
+        return;
+    }
+    const monday = getMondayOfISOWeek(week, year);
+    const sunday = getSundayOfISOWeek(week, year);
+    const start = `${monday.getDate()} de ${monthName(monday)}`;
+    const end = `${sunday.getDate()} de ${monthName(sunday)}`;
+    document.getElementById('week-range-preview').innerText =
+        `Del ${start} al ${end}`;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const weekInput = document.querySelector('.week-number');
+    const yearInput = document.querySelector('.year');
+    if (weekInput && yearInput) {
+        weekInput.addEventListener('input', updateWeekRangePreview);
+        yearInput.addEventListener('input', updateWeekRangePreview);
+        updateWeekRangePreview();
+    }
+});
 </script>
 {% endblock %}
