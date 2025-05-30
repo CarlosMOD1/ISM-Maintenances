@@ -1,0 +1,14 @@
+{
+"name": "MiniWhite",
+"mantenimientos":    ["Limpieza fisica de equipo de computo (Dell, Paladin..)",
+                        "Revisar integridad de puertos para perifericos",
+                        "Revision de funcionalidad de monitor.",
+                        "Revision de funcionalidad de teclado y mouse",
+                        "Revision de funcionalidad de scanner",
+                        "Revisar ruteado de cables. Aplicar corbatas en caso de ser necesario",
+                        "Limpieza fisica. (Aspirado de puertos, disipadores, abanicos y PSU).",
+                        "Revisa cableado de celdas y pins soldados (Resoldar en caso de que sea necesario)",
+                        "Revisar Revisar pins de celdas (Sustituir en caso de que sea necesario)",
+                        "Correr tablilla en celda y marcar cantidad de celdas que detectan MAC",
+                        "Revisar codigos QR"]
+}

@@ -15,7 +15,7 @@ STATIONS_SPSF = {
     "gps3": {"prefix": "GPS3_est_", "total": 1},
     "burn_in": {"prefix": "Burn-in_est_", "total": 1},
     "cell": {"prefix": "cell_est_", "total": 1},
-    "funcional1": {"prefix": "functional_est_", "total": 3},
+    "funcional1": {"prefix": "functional_est_", "total": 1},
     "hmi": {"prefix": "HMI_est_", "total": 4},
     "performance": {"prefix": "Performance_est_", "total": 2},
     "power_on": {"prefix": "power-on_est_", "total": 6},
