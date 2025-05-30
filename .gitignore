@@ -5,5 +5,4 @@ __pycache__/
 *.zip
 *.media
 .env
-# Ignorar la base de datos
 db.sqlite3
