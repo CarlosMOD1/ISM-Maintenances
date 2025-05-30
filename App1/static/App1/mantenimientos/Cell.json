@@ -10,5 +10,5 @@
                         "Validar que la tierra para pulseras se encuentre bien aterrizada",
                         "Validar que los multiconectores esten bien amarrados al rack y esten encendidos",
                         "Validar que se encuentren 2 microtags que emitan por celda",
-                        "Validar que exista un bluetooth tape activo por nivel de rack"]
+                        "Validar que exista por lo menos 1 bluetooth tape activo por nivel de rack"]
 }
