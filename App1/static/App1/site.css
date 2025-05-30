@@ -258,6 +258,7 @@ input[name=message] {
 
 .styled-history-form .week-number,
 .styled-history-form .year,
+.styled-history-form .estacion,
 .styled-history-form .familia {
     width: 100%; /* Ajustar el ancho de las cajas de texto */
     padding: 10px;

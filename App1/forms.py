@@ -6,10 +6,33 @@ from django.contrib.auth.models import User
 from App1.models import LogMessage
 from App1.models import MaintenanceRecord, MantenimientoChecklist
 from App1.models import MaintenanceChecklistRecord
+from App1.models import Station
 from django.utils import timezone
 
 
+STATIONS_SPSF = {
+    "programacion": {"prefix": "programacion_est_", "total": 4},
+    "gps3": {"prefix": "GPS3_est_", "total": 1},
+    "burn_in": {"prefix": "Burn-in_est_", "total": 1},
+    "cell": {"prefix": "cell_est_", "total": 1},
+    "funcional1": {"prefix": "functional_est_", "total": 3},
+    "hmi": {"prefix": "HMI_est_", "total": 4},
+    "performance": {"prefix": "Performance_est_", "total": 2},
+    "power_on": {"prefix": "power-on_est_", "total": 6},
+    "som_programacion": {"prefix": "som-programming_est_", "total": 2},
+}
 
+STATIONS_MINIWHITE = {
+    "MiniWhite-Mañana": {"prefix": "MiniWhite-Mañana_est_", "total": 6},
+    "MiniWhite-Tarde": {"prefix": "MiniWhite-Tarde_est_", "total": 6},
+}
+
+STATIONS_TAPES = {
+    "ATE": {"prefix": "ATE_est_", "total": 6},
+}
+
+est = list(STATIONS_MINIWHITE.keys()) + list(STATIONS_SPSF.keys()) + list(STATIONS_TAPES.keys())
+estaciones =[('', 'Todas')] + [(est, est) for est in list(STATIONS_MINIWHITE.keys()) + list(STATIONS_SPSF.keys()) + list(STATIONS_TAPES.keys())]
 class LogMessageForm(forms.ModelForm):
     class Meta:
         model = LogMessage
@@ -36,22 +59,33 @@ class MaintenanceRecordForm(forms.ModelForm):
 class MaintenanceHistoryForm(forms.Form):
     week_number = forms.IntegerField(
         label="Número de Semana", min_value=1, max_value=52,
-        required=False,  # <-- ahora es opcional
+        required=False,
         widget=forms.NumberInput(attrs={'class': 'form-control week-number'})
     )
     year = forms.IntegerField(
         label="Año", min_value=2000, max_value=2100,
-        required=False,  # <-- ahora es opcional
+        required=False, 
         widget=forms.NumberInput(attrs={'class': 'form-control year'})
     )
     familia = forms.ChoiceField(
         label="Familia", choices=MaintenanceRecord.FAMILIA_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control familia'})
     )
-    
+
+    # Construir la lista de nombres base
+    BASE_STATION_CHOICES = [('', 'Todas')]
+    for d in (STATIONS_SPSF, STATIONS_MINIWHITE, STATIONS_TAPES):
+        BASE_STATION_CHOICES += [(k, k) for k in d.keys()]
+
+    station = forms.ChoiceField(
+        label="Estación",
+        choices=BASE_STATION_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control estacion'})
+    )
 
     def __init__(self, *args, **kwargs):
-        super(MaintenanceHistoryForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         current_date = timezone.now()
         self.fields['week_number'].initial = current_date.isocalendar()[1]
         self.fields['year'].initial = current_date.year

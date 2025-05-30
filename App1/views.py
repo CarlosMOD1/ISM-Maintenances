@@ -20,6 +20,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import UserRegistrationForm
 from datetime import timedelta
 from django.core.paginator import Paginator
+from App1.forms import STATIONS_MINIWHITE, STATIONS_SPSF, STATIONS_TAPES
 
 
 # Replace the existing home function with the one below
@@ -109,6 +110,7 @@ def maintenances_history(request):
         week_number = form.cleaned_data['week_number']
         year = form.cleaned_data['year']
         familia = form.cleaned_data['familia']
+        estacion = form.cleaned_data['station']
 
         filters = {
             'unidad_de_trabajo': familia
@@ -117,6 +119,16 @@ def maintenances_history(request):
             filters['log_date__week'] = week_number
         if year:
             filters['log_date__year'] = year
+
+        # Nuevo: filtrar por prefijo si se seleccionó estación base
+        if estacion:
+            prefix = None
+            for d in (STATIONS_SPSF, STATIONS_MINIWHITE, STATIONS_TAPES):
+                if estacion in d:
+                    prefix = d[estacion]['prefix']
+                    break
+            if prefix:
+                filters['station__name__startswith'] = prefix
 
         maintenance_records = MaintenanceRecord.objects.filter(
             **filters
@@ -274,27 +286,6 @@ def user_dashboard(request):
     return render(request, "dashboard.html", {
         "background_image": background_image,
     })
-
-STATIONS_SPSF = {
-    "programacion": {"prefix": "programacion_est_", "total": 8},
-    "gps3": {"prefix": "GPS3_est_", "total": 1},
-    "burn_in": {"prefix": "Burn-in_est_", "total": 1},
-    "cell": {"prefix": "cell_est_", "total": 2},
-    "funcional1": {"prefix": "functional_est_", "total": 4},
-    "hmi": {"prefix": "HMI_est_", "total": 6},
-    "performance": {"prefix": "Performance_est_", "total": 3},
-    "power_on": {"prefix": "power-on_est_", "total": 6},
-    "som_programacion": {"prefix": "som-programming_est_", "total": 2},
-}
-
-STATIONS_MINIWHITE = {
-    "MiniWhite-Mañana": {"prefix": "MiniWhite-Mañana_est_", "total": 6},
-    "MiniWhite-Tarde": {"prefix": "MiniWhite-Tarde_est_", "total": 6},
-}
-
-STATIONS_TAPES = {
-    "ATE": {"prefix": "ATE_est_", "total": 6},
-}
 
 class CustomLoginView(LoginView):
     template_name = 'App1/login.html'  # Plantilla para el formulario de login
