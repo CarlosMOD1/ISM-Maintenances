@@ -31,6 +31,12 @@ STATIONS_TAPES = {
     "ATE": {"prefix": "ATE_est_", "total": 6},
 }
 
+STATIONS_SNIFFERS = {
+    "sniffers": {"prefix": "Sniffer_est_", "total": 5},
+    "gps": {"prefix": "GPS_est_", "total": 2},
+    "cellular": {"prefix": "GPS_est_", "total": 2},
+}
+
 est = list(STATIONS_MINIWHITE.keys()) + list(STATIONS_SPSF.keys()) + list(STATIONS_TAPES.keys())
 estaciones =[('', 'Todas')] + [(est, est) for est in list(STATIONS_MINIWHITE.keys()) + list(STATIONS_SPSF.keys()) + list(STATIONS_TAPES.keys())]
 class LogMessageForm(forms.ModelForm):

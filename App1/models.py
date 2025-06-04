@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django import forms
+import os
 
 
 class LogMessage(models.Model):
@@ -44,7 +45,7 @@ class MaintenanceRecord(models.Model):
     log_date = models.DateTimeField("date logged", default=timezone.now)
     week_number = models.PositiveIntegerField(editable=False)
     aprobado = models.CharField(max_length=20, choices=APROBADO_CHOICES, default='No aprobado')
-    imagen = models.ImageField(upload_to='mantenimientos/', null=True, blank=True)  # <-- Nuevo campo
+    imagen = models.ImageField(upload_to='mantenimientos/', null=True, blank=True)
     cells_active = models.IntegerField(null=True, blank=True)  
 
     def save(self, *args, **kwargs):
@@ -55,11 +56,12 @@ class MaintenanceRecord(models.Model):
 
             img = Image.open(self.imagen)
             output = BytesIO()
-            img = img.convert('RGB')  # Asegura que sea JPEG
-            # img.thumbnail((800, 800))  # Elimina esta línea si no quieres redimensionar
-            img.save(output, format='JPEG', quality=15)  # Solo reduce la calidad
+            img = img.convert('RGB')
+            img.save(output, format='JPEG', quality=15)
             output.seek(0)
-            self.imagen = ContentFile(output.read(), self.imagen.name)
+            # SOLO el nombre del archivo, sin ruta
+            filename = os.path.basename(self.imagen.name)
+            self.imagen = ContentFile(output.read(), filename)
         self.week_number = self.log_date.isocalendar()[1]
         super().save(*args, **kwargs)
 

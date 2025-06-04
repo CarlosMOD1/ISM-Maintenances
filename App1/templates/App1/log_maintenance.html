@@ -5,6 +5,14 @@ Log Maintenance - {{ station_name }}
 {% endblock %}
 {% block content %}
 <h2>Log Maintenance - {{ station_name }}</h2>
+
+{% if error_message %}
+    <div style="background:#ffdddd;border:2px solid #ff2222;color:#b30000;padding:20px;font-size:1.3em;font-weight:bold;border-radius:8px;display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+        <span style="font-size:2em;">&#9888;</span>
+        {{ error_message }}
+    </div>
+{% endif %}
+
 <form method="post" class="maintenance-form" enctype="multipart/form-data">
     {% csrf_token %}
     

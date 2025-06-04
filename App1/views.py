@@ -20,7 +20,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import UserRegistrationForm
 from datetime import timedelta
 from django.core.paginator import Paginator
-from App1.forms import STATIONS_MINIWHITE, STATIONS_SPSF, STATIONS_TAPES
+from App1.forms import STATIONS_MINIWHITE, STATIONS_SPSF, STATIONS_TAPES, STATIONS_SNIFFERS
 
 
 # Replace the existing home function with the one below
@@ -44,7 +44,7 @@ def log_maintenance(request, station_name):
 
     # Extraer el nombre base de la estación
     base_station_name = None
-    for base_name, config in {**STATIONS_SPSF, **STATIONS_TAPES, **STATIONS_MINIWHITE}.items():
+    for base_name, config in {**STATIONS_SPSF, **STATIONS_TAPES, **STATIONS_MINIWHITE, **STATIONS_SNIFFERS}.items():
         if station_name.startswith(config["prefix"]):
             base_station_name = base_name
             break
@@ -56,7 +56,76 @@ def log_maintenance(request, station_name):
     # Obtener la URL anterior desde el parámetro 'next' o usar '/' como respaldo
     previous_url = request.GET.get('next', request.POST.get('next', '/'))
 
+    # --- VALIDACIÓN DE DUPLICADOS ---
+    error_message = None
+    edit_mode = request.GET.get('edit') == '1'
+    maintenance_record = None
+
+    if edit_mode:
+        # Busca el registro más reciente para editar
+        if base_station_name in STATIONS_SPSF or base_station_name in STATIONS_TAPES:
+            current_week = timezone.now().isocalendar()[1]
+            maintenance_record = MaintenanceRecord.objects.filter(
+                station=station,
+                log_date__week=current_week
+            ).order_by('-log_date').first()
+        elif base_station_name in STATIONS_MINIWHITE or base_station_name in STATIONS_SNIFFERS:
+            today = timezone.now().date()
+            maintenance_record = MaintenanceRecord.objects.filter(
+                station=station,
+                log_date__date=today
+            ).order_by('-log_date').first()
+
+    # --- CORRIGE AQUÍ: Usa la instancia en el formulario si es edición ---
     if request.method == "POST":
+        # Obtén el tipo de mantenimiento del formulario POST
+        tipo_mantenimiento = request.POST.get("tipo_mantenimiento", "Preventivo")
+
+        if edit_mode and maintenance_record:
+            form = MaintenanceRecordForm(request.POST, request.FILES, instance=maintenance_record)
+            checklist_form = MantenimientoForm(station_name, request.POST, maintenance_record=maintenance_record)
+        else:
+            form = MaintenanceRecordForm(request.POST, request.FILES)
+            checklist_form = MantenimientoForm(station_name, request.POST)
+
+        # Solo aplica la restricción si es preventivo
+        if tipo_mantenimiento == "Preventivo":
+            # SPSF y ATE: solo uno por semana
+            if base_station_name in STATIONS_SPSF or base_station_name in STATIONS_TAPES:
+                current_week = timezone.now().isocalendar()[1]
+                qs = MaintenanceRecord.objects.filter(
+                    station=station,
+                    log_date__week=current_week,
+                    tipo_mantenimiento="Preventivo"
+                )
+                if edit_mode and maintenance_record:
+                    qs = qs.exclude(pk=maintenance_record.pk)
+                exists = qs.exists()
+                if exists:
+                    error_message = "Ya existe un mantenimiento preventivo registrado para esta estación en la semana actual."
+            # MiniWhite y Sniffers: solo uno por día
+            elif base_station_name in STATIONS_MINIWHITE or base_station_name in STATIONS_SNIFFERS:
+                today = timezone.now().date()
+                qs = MaintenanceRecord.objects.filter(
+                    station=station,
+                    log_date__date=today,
+                    tipo_mantenimiento="Preventivo"
+                )
+                if edit_mode and maintenance_record:
+                    qs = qs.exclude(pk=maintenance_record.pk)
+                exists = qs.exists()
+                if exists:
+                    error_message = "Ya existe un mantenimiento preventivo registrado para esta estación en el día de hoy."
+
+        if error_message:
+            return render(request, "App1/log_maintenance.html", {
+                "form": form,
+                "checklist_form": checklist_form,
+                "next": previous_url,
+                "station_name": station_name,
+                "error_message": error_message,
+            })
+
         if form.is_valid() and checklist_form.is_valid():
             maintenance_record = form.save(commit=False)
             maintenance_record.station = station
@@ -93,10 +162,19 @@ def log_maintenance(request, station_name):
             # Redirigir a la página anterior
             return redirect(previous_url)
 
+    else:
+        # GET: muestra el formulario con la instancia si es edición
+        if maintenance_record:
+            form = MaintenanceRecordForm(instance=maintenance_record)
+            checklist_form = MantenimientoForm(station_name, maintenance_record=maintenance_record)
+        else:
+            form = MaintenanceRecordForm()
+            checklist_form = MantenimientoForm(station_name)
+
     return render(request, "App1/log_maintenance.html", {
         "form": form,
         "checklist_form": checklist_form,
-        "next": previous_url,  # Pasar la URL anterior al contexto
+        "next": previous_url,
         "station_name": station_name,
     })
 
@@ -314,16 +392,22 @@ def home_view(request):
     has_incomplete_spsf = has_incomplete_stations(STATIONS_SPSF, completed_stations)
     has_incomplete_tapes = has_incomplete_stations(STATIONS_TAPES, completed_stations)
 
-    # Lógica para MiniWhite: usa las últimas 20 horas
+    # Lógica para MiniWhite: usa las últimas 16 horas
     time_threshold = timezone.now() - timedelta(hours=16)
     miniwhite_records = MaintenanceRecord.objects.filter(log_date__gte=time_threshold)
     miniwhite_completed = miniwhite_records.values_list('station__name', flat=True)
     has_incomplete_miniwhite = has_incomplete_stations(STATIONS_MINIWHITE, miniwhite_completed)
 
+    # Lógica para Sniffers: usa las últimas 16 horas
+    sniffers_records = MaintenanceRecord.objects.filter(log_date__gte=time_threshold)
+    sniffers_completed = sniffers_records.values_list('station__name', flat=True)
+    has_incomplete_sniffers = has_incomplete_stations(STATIONS_SNIFFERS, sniffers_completed)
+
     return render(request, 'App1/home.html', {
         "has_incomplete_spsf": has_incomplete_spsf,
         "has_incomplete_tapes": has_incomplete_tapes,
         "has_incomplete_miniwhite": has_incomplete_miniwhite,
+        "has_incomplete_sniffers": has_incomplete_sniffers,  # <-- Agrega esta línea
     })
 
 @staff_member_required  # Solo accesible para usuarios administradores
@@ -460,6 +544,37 @@ def miniwhite_view(request):
     })
 
 def miniwhite_station_view(request, section_name):
+    time_threshold = timezone.now() - timedelta(hours=16)
+    maintenance_records = MaintenanceRecord.objects.filter(
+        log_date__gte=time_threshold
+    )
+    completed_stations = maintenance_records.values_list('station__name', flat=True)
+
+    return render(request, f"App1/Estaciones_templates/{section_name}.html", {
+        "section_name": section_name,
+        "completed_stations": completed_stations,
+    })
+
+def sniffers_view(request):
+    time_threshold = timezone.now() - timedelta(hours=16)
+    maintenance_records = MaintenanceRecord.objects.filter(
+        log_date__gte=time_threshold
+    )
+    completed_stations = maintenance_records.values_list('station__name', flat=True)
+
+    all_completed_stations = {}
+    for section_name, config in STATIONS_SNIFFERS.items():
+        all_completed_stations[section_name] = are_all_status_completed(
+            station_prefix=config["prefix"],
+            completed_stations=completed_stations,
+            total_stations=config["total"]
+        )
+
+    return render(request, "App1/sniffers.html", {
+        "all_completed_stations": all_completed_stations,
+    })
+
+def sniffers_station_view(request, section_name):
     time_threshold = timezone.now() - timedelta(hours=16)
     maintenance_records = MaintenanceRecord.objects.filter(
         log_date__gte=time_threshold

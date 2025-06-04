@@ -26,6 +26,8 @@ urlpatterns = [
     path("register/", views.register, name="register"),
     path("miniwhite/", views.miniwhite_view, name="miniwhite"),
     path("miniwhite/<str:section_name>/", views.miniwhite_station_view, name="miniwhite_station_view"),
+    path("sniffers/", views.sniffers_view, name="sniffers"),
+    path("sniffers/<str:section_name>/", views.sniffers_station_view, name="sniffers_station_view"),
 ]
 
 

@@ -1,0 +1,39 @@
+{% extends "App1/layout.html" %}
+{% load static %}
+{% block title %}
+ATE 1
+{% endblock %}
+{% block content %}
+<h2>sniffers</h2>
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Estación</th>
+            <th>Estatus</th>
+            <th>Registrar</th>
+            <th>Documentación</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in "12345" %}
+        <tr>
+            <td>sniffers_est_{{ i }}</td>
+            <td>
+                {% if 'sniffers_est_'|add:i in completed_stations %}
+                Completado
+                {% else %}
+                No Completado
+                {% endif %}
+            </td>
+
+            <td>
+                <a href="{% url 'log_maintenance' 'sniffers_est_'|add:i %}?next={{ request.path }}" class="button">Registrar</a>
+            </td>
+            <td>
+                <a href="{% static 'App1/Archivos_pdf_mantenimiento/ATE_mantenimientos.pdf' %}" class="button" target="_blank">Ver PDF</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

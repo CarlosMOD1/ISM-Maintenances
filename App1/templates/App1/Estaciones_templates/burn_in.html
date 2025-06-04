@@ -11,7 +11,7 @@ burn-in 1
             <th>Estación</th>
             <th>Estatus</th>
             <th>Registrar</th>
-            <th>Documentación</th>
+            <th>Editar</th> <!-- Cambiado -->
         </tr>
     </thead>
     <tbody>
@@ -29,7 +29,7 @@ burn-in 1
                 <a href="{% url 'log_maintenance' 'Burn-in_est_'|add:i %}?next={{ request.path }}" class="button">Registrar</a>
             </td>
             <td>
-                <a href="{% static 'App1/Archivos_pdf_mantenimiento/burn-in_mantenimientos.pdf' %}" class="button" target="_blank">Ver PDF</a>
+                <a href="{% url 'log_maintenance' 'Burn-in_est_'|add:i %}?edit=1&next={{ request.path }}" class="button">Editar</a>
             </td>
         </tr>
         {% endfor %}
