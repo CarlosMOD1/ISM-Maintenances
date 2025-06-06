@@ -29,6 +29,7 @@ class MaintenanceRecord(models.Model):
         ('TAPES', 'TAPES'),
         ('SPSF', 'SPSF'),
         ("MiniWhite", 'MiniWhite'),
+        ('Sniffers', 'Sniffers'),
     ]
     APROBADO_CHOICES = [
         ('No aprobado', 'No aprobado'),

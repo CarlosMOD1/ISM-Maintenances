@@ -137,6 +137,8 @@ def log_maintenance(request, station_name):
                 maintenance_record.unidad_de_trabajo = "TAPES"
             elif base_station_name in STATIONS_MINIWHITE:
                 maintenance_record.unidad_de_trabajo = "MiniWhite"
+            elif base_station_name in STATIONS_SNIFFERS:
+                maintenance_record.unidad_de_trabajo = "Sniffers"
 
             # ← AQUÍ AGREGA EL CÓDIGO PARA MINIWHITE
             if "cells_active" in checklist_form.cleaned_data:

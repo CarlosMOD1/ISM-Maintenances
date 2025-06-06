@@ -32,9 +32,9 @@ STATIONS_TAPES = {
 }
 
 STATIONS_SNIFFERS = {
-    "sniffers": {"prefix": "Sniffer_est_", "total": 5},
-    "gps": {"prefix": "GPS_est_", "total": 2},
-    "cellular": {"prefix": "GPS_est_", "total": 2},
+    "sniffers": {"prefix": "sniffers_est_", "total": 5},
+    "gps": {"prefix": "gps_est_", "total": 2},
+    "cellular": {"prefix": "cellular_est_", "total": 2},
 }
 
 est = list(STATIONS_MINIWHITE.keys()) + list(STATIONS_SPSF.keys()) + list(STATIONS_TAPES.keys())

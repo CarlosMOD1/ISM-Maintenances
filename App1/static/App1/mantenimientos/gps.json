@@ -1,0 +1,7 @@
+{
+"name": "gps",
+"mantenimientos":    ["modulo de gps prendido",
+                        "modulo de gps con localizacion correcta",
+                        "modulo de gps con barras verdes de señal"
+                    ]
+}
