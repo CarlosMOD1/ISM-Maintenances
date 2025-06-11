@@ -4,5 +4,6 @@ __pycache__/
 *.log
 *.zip
 *.media
+media/
 .env
 db.sqlite3
